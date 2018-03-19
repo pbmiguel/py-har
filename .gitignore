@@ -3,6 +3,9 @@
 ##
 /datasets/*
 /TASKS/T1/pre-processing/shoaib.json
+/TASKS/T1/pre-processing/Participant_*.json
+/TASKS/T1/pre-processing/valid-dataset/*
+
 
 ##
 ## NODEJS

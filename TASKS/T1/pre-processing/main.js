@@ -9,22 +9,88 @@
  **/
 
 //
-var csv = require('csv');
-var fs = require('fs');
-var store = require('json-fs-store')(__dirname);
+const FILENAME = "Participant_10";
+var csv = require('csv'),
+    fs = require('fs'),
+    store = require('json-fs-store')(__dirname),
+    dataset = null,
+    csvparser = csv.parse({
+        delimiter: ','
+    }, function (err, data) {
+        console.log("err:", err);
+        console.log("data.length:", data.length);
+        store_object(FILENAME, data);
+        dataset = data;
+    });
 
-/*
-return load_object("shoaib", function(object){
-    console.log("data.length:", object.length);
-});*/
+const INDEX_LABEL = 69;
+const NR_OF_COLUMNS = 13;
 
-var csvparser = csv.parse({
-    delimiter: ','
-}, function (err, data) {
-    console.log("err:", err);
-    console.log("data.length:", data.length);
-    store_object("shoaib", data);
-});
+preprocessdataset();
+
+//
+function preprocessdataset() {
+    return load_object(FILENAME, function (object) {
+        if (!object) {
+            console.log("reading-file");
+            var stream = fs
+                .createReadStream("../../../datasets/raw-files/shoaib/" + FILENAME + ".csv")
+                .pipe(csvparser);
+
+            return stream.on('finish', function () {
+                console.log("golo!");
+                //proceed(dataset);
+                setTimeout(function () {
+                    return preprocessdataset(dataset);
+                }, 2000);
+            });
+        }else{
+            console.log("in-memory");
+        }
+
+        /*
+        // count nr of columns per sensor-placement
+            // 14 columns per each sensor-placement
+            // 70 columns in total
+            // ax, ay, az,lx,ly,lz,gx,gy,gz,mx,my,mz,label*/
+
+        var header = "ax, ay, az,lx,ly,lz,gx,gy,gz,mx,my,mz,label";
+        var files = ["left_pocket.csv", "right_pocket.csv", "wrist.csv", "upper_arm.csv", "belt.csv"];
+        var participant_data = [new String(header), new String(header), new String(header), new String(header), new String(header)];
+        // label is at 69th position
+        for (var i = 3; i < object.length; i++) {
+
+            var placementData = String(object[i]).split(',,');
+            const label = object[i][INDEX_LABEL];
+            for (var j = 0; j < placementData.length; j++) {
+                var data = String(placementData[j]).split(',');
+                if (j < placementData.length - 1) 
+                    data.push(label);
+                participant_data[j] += "\n" + String(data.slice(1));
+            }
+        }
+
+        console.log(participant_data[1]);
+        // write files
+        var index = 0;
+        var writeFiles = function () {
+            return fs.writeFile("valid-dataset/" + FILENAME + "_" + files[index], participant_data[index], function (err) {
+                if (err) {
+                    return console.log(err);
+                }
+                console.log("The file", files[index], " was saved!");
+                if (index < 5) {
+                    index++;
+                    writeFiles();
+                } else {
+                    console.log("finished");
+                }
+            });
+        }
+        writeFiles();
+
+    });
+}
 
 function store_object(id, object) {
     object.id = id;
@@ -41,13 +107,8 @@ function load_object(id, callback) {
     return store.load(id, function (err, object) {
         if (err) {
             return callback();
-        } 
-        // err if JSON parsing failed
-        // do something with object here
+        }
+        // err if JSON parsing failed do something with object here
         return callback(object);
     });
 }
-
-fs
-    .createReadStream('../../../datasets/raw-files/shoaib/participant_1.csv')
-    .pipe(csvparser);
