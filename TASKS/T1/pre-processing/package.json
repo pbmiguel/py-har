@@ -1,0 +1,9 @@
+{
+    "name": "pre-processing-of-task-1",
+    "version": "0.0.1",
+    "description": "",
+    "dependencies": {
+        "csv": "^2.0.0",
+        "json-fs-store": "^1.0.1"
+    }
+}
