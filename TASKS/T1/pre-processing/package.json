@@ -5,5 +5,8 @@
     "dependencies": {
         "csv": "^2.0.0",
         "json-fs-store": "^1.0.1"
+    },
+    "scripts": {
+        "start": "node main.js file=Participant_1 & node main.js file=Participant_2 & node main.js file=Participant_3 & node main.js file=Participant_4 & node main.js file=Participant_5 & node main.js file=Participant_6 & node main.js file=Participant_7 & node main.js file=Participant_8 & node main.js file=Participant_9 & node main.js file=Participant_10"
     }
 }

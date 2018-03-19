@@ -8,8 +8,25 @@
  * to:      wrist_participant_1.csv, left_pocket_participant_1.csv, upper_arm_participant_1.csv, belt_participant_1.csv
  **/
 
+var args = process
+        .argv
+        .slice(2),
+    FILENAME = null;
+
+if (args.length >= 1) {
+    for (var i = 0; i < args.length; i++) {
+        if (args[i].indexOf("file") != -1) {
+            var array = args[i].split("=");
+            if (array.length == 2) {
+                FILENAME = array[1];
+            }
+        }
+    }
+} else {
+    throw Error("Invalid Arguments! Ex: node main.js file=<filename>");
+}
+
 //
-const FILENAME = "Participant_10";
 var csv = require('csv'),
     fs = require('fs'),
     store = require('json-fs-store')(__dirname),
@@ -44,7 +61,7 @@ function preprocessdataset() {
                     return preprocessdataset(dataset);
                 }, 2000);
             });
-        }else{
+        } else {
             console.log("in-memory");
         }
 
