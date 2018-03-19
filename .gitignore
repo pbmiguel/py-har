@@ -5,6 +5,8 @@
 /TASKS/T1/pre-processing/shoaib.json
 /TASKS/T1/pre-processing/Participant_*.json
 /TASKS/T1/pre-processing/valid-dataset/*
+!/TASKS/T1/pre-processing/valid-dataset/Participant_10*
+!/TASKS/T1/pre-processing/valid-dataset/Participant_9*
 
 
 ##
