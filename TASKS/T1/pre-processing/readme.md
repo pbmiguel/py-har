@@ -7,12 +7,12 @@ The script will read all participants signals and separate each signal according
 ## Initial Dataset
 Name: Fusion of Smartphone Motion Sensors for Physical Activity Recognition  
 URL: http://ps.ewi.utwente.nl/Blog/Sensors_Activity_Recognition_DataSet_Shoaib.rar  
-Date:2014  
+Date: 2014  
 Users Gender: 10M 00F    
 Users Age: 25-30	  
-Static Activities:2  
-Motion Activities:3	  
-Sensors: acc,gyro,magn	 
+Static Activities: 2  
+Motion Activities: 3	  
+Sensors: acc,gyro,magn  	 
 Sensors Location: hip,arm,wrist	 
 Device: Smartphone  
 
