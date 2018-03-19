@@ -12,8 +12,8 @@ Users Gender: 10M 00F
 Users Age: 25-30	  
 Static Activities: 2  
 Motion Activities: 3	  
-Sensors: acc,gyro,magn  	 
-Sensors Location: hip,arm,wrist	 
+Sensors: acc,gyro,magn  
+Sensors Location: hip,arm,wrist  
 Device: Smartphone  
 
 ## Final Dataset
