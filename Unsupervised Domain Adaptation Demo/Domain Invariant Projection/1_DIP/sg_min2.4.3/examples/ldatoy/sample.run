@@ -1,0 +1,19 @@
+>> !cp examples/ldatoy/*.m .
+>> K = Kinetic(12);
+>> parameters(K,20);
+>> Y0 = guess(4);
+>> [fn,Yn] = sg_min(Y0,'newton','euclidean');
+iter    grad            F(Y)              flops         step type
+0       2.432521e+00    7.750104e+00         4554       none
+  invdgrad: Hessian not positive definite, CG terminating early
+1       4.770038e-01    7.546426e+00       367756       steepest step
+2       4.664971e-02    7.531450e+00       789739       Newton step
+3       3.363736e-04    7.531232e+00      1284452       Newton step
+4       1.809273e-07    7.531232e+00      1976096       Newton step
+5       1.843536e-07    7.531232e+00      2778377       Newton step
+>> fn
+
+fn =
+
+    7.5312
+

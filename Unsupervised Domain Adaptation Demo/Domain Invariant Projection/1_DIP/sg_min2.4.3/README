@@ -1,0 +1,48 @@
+The sgmin version 2.0 directory README file
+-------------------------------------------
+
+
+The matlab functions presented in this directory serve to implement
+the function sg_min, for Stiefel-Grassmann optimization.  This is the
+second version of this code, which has improved accuracy, a different
+set of convergence criteria, and some bug-fixes.  Additionally, the
+Polak- Ribiere conjugate gradient method is now available.
+
+If the subdirectory examples/ is present, it contains several
+subdirectories of sample F.m, dF.m, and ddF.m functions which
+represent a variety of Stiefel-Grassmann problems.
+
+If the subdirectory @cell/ is present, it contains special functions
+which extend sg_min to product Stiefel-Grassmann manifolds.  More
+details can be found in the file @cell/README
+
+
+-------------------------------------------------------------
+sg_min 2.3 edition
+-------------------------------------------------------------
+
+The sg_min 2.3 edition contains additional documentation in the
+examples/jordan subdirectory to help the user selected parameters
+for their particular problem.
+
+Additionally, modifications to the sg_min code will eventually
+cause its numerical behavior and results to diverge from that 
+described in Chapter 8 of the Eigenvalue Templates book, in which
+a previous version appears.  For that reason, the examples/ 
+subdirectory will contain files of sample output which should be
+obtainable by the current version whatever it is.
+
+-------------------------------------------------------------
+sg_min 2.4 edition
+-------------------------------------------------------------
+
+It has been a while since I have tried to maintain this.  I
+have made some fixes to maintain compatability with matlab
+(I have removed the flops count and I have replaced fmin with
+fminbnd).
+
+However, looking back at this code, now 5 years later, I was
+surprised at some of the lame stuff it is doing.  If you are
+an sg_min user and you agree that the implementations of Newton
+and CG are lame, then tell me of your interest and I will try
+to accomodate.

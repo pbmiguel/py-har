@@ -1,0 +1,34 @@
+>> !cp examples/jordan/*.m .
+>> A = frank(12);
+>> evs = sort(eig(A)); eigvs = [mean(evs(1:4)) mean(evs(5:6))];               
+>> parameters(A,eigvs,[2 2; 2 0],'orbit');
+   2 Jordan blocks of order 2 of eigenvalue 0.076352
+   1 Jordan block  of order 2 of eigenvalue 0.464128
+>> Y0 = guess;
+>> [fn,Yn] = sg_min(Y0,'newton','canonical');
+iter    grad            F(Y)              flops         step type
+0       8.436207e-01    3.202492e+00        17969       none
+  invdgrad: Hessian not positive definite, CG terminating early
+1       2.161396e+01    3.081966e+00      1243892       Newton step
+  invdgrad: Hessian not positive definite, CG terminating early
+2       1.069000e+01    2.575738e+00      2630314       Newton step
+  invdgrad: Hessian not positive definite, CG terminating early
+3       8.300500e+00    1.993697e+00      5627332       Newton step
+  invdgrad: Hessian not positive definite, CG terminating early
+4       4.111325e+00    1.699987e+00      8272290       Newton step
+  invdgrad: max iterations reached inverting the hessian by CG
+5       2.033795e+00    1.423814e+00     11834932       Newton step
+  invdgrad: max iterations reached inverting the hessian by CG
+6       1.822456e-01    1.356224e+00     15320427       Newton step
+  invdgrad: max iterations reached inverting the hessian by CG
+7       1.047158e-03    1.355631e+00     19018006       Newton step
+  invdgrad: max iterations reached inverting the hessian by CG
+8       1.366687e-05    1.355631e+00     23676763       Newton step
+9       1.453020e-07    1.355631e+00     27695002       Newton step
+10      7.028756e-08    1.355631e+00     30869666       Newton step
+>> fn
+
+fn =
+
+    1.3556
+

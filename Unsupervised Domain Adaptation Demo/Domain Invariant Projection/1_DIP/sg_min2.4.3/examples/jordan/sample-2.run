@@ -1,0 +1,22 @@
+>> !cp examples/jordan/*.m .
+>> A = frank(12);
+>> evs = sort(eig(A)); eigvs = [mean(evs(1:2)) mean(evs(3:4)) mean(evs(5:6))];
+>> parameters(A,eigvs,[2; 2; 2],'orbit'); 
+   1 Jordan block  of order 2 of eigenvalue 0.040267
+   1 Jordan block  of order 2 of eigenvalue 0.112438
+   1 Jordan block  of order 2 of eigenvalue 0.464128
+>> Y0 = guess;
+>> [fn,Yn] = sg_min(Y0,'dog','euclidean');   
+iter    grad            F(Y)              flops         step type
+0       1.626213e-02    7.742417e-06        16177       none
+1       5.707905e-05    3.849083e-06      4346784       good dog
+2       1.326787e-06    3.848583e-06      8409274       good dog
+3       4.420357e-09    3.848583e-06     12116509       good dog
+4       1.771467e-09    3.848583e-06     13196101       stay
+5       1.514250e-09    3.848583e-06     14266197       bad dog
+>> fn
+
+fn =
+
+   3.8486e-06
+

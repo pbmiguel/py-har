@@ -1,0 +1,18 @@
+The @cell directory README file
+-------------------------------
+
+This directory is included as an experimental augmentation to the
+sg_min routines to allow them to operate on product Stiefel-Grassmann
+manifolds.  The presence of the @cell subdirectory will cause certain
+functions used by sg_min and matlab to be overloaded so that calls of
+the form
+
+[fn,Yn] = sg_min(Y)
+
+will make sense when Y = {Y1 Y2 ... Yk} (a matlab cell-array)
+where each matrix Yi satisfies Yi'*Yi = I(size(Yi'*Yi)).
+
+It is expected that F.m, dF.m, and ddF.m be written with the syntax:
+double = F(cell-array)
+cell-array = dF(cell-array)
+cell-array = ddF(cell-array,cell-array)
