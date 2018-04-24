@@ -1,4 +1,10 @@
 ##
+## Ignore Unsupervised Domain Adaptation Demos
+##
+
+Unsupervised Domain Adaptation Demo/*
+
+##
 ## DATASETS
 ##
 /datasets/*
