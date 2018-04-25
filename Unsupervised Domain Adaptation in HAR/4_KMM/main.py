@@ -4,6 +4,11 @@ import random, sys
 from sklearn import svm
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
+from sklearn.decomposition import PCA
+from sklearn import tree
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import BernoulliNB
 
 FixedBetaValue = 1.0
 
@@ -133,11 +138,45 @@ def separateData(data, maxvar):
 
 
 def buildModel(trainX, trainY, beta, testX, testY, svmParam, maxvar):
+    # beta fixed
+    beta_fixed = getFixedBeta(FixedBetaValue, len(trainX))
+
+    # decision tree with KMM
+    dt = tree.DecisionTreeClassifier()
+    dt = dt.fit(trainX, trainY, sample_weight=beta)
+    result = dt.predict(testX)
+    accDT = checkAccuracy(result, testY)
+    print("Decision Tree ACC WITH:", accDT)
+    # decision tree without KMM
+    dt = tree.DecisionTreeClassifier()
+    dt = dt.fit(trainX, trainY, sample_weight=beta_fixed)
+    result = dt.predict(testX)
+    accDT2 = checkAccuracy(result, testY)
+    print("Decision Tree ACC WIHTOUT KMM:", accDT2)
+
+    # KNN with KMM , sample_weights erros -> TypeError: Axis must be specified when shapes of a and weights differ.
+    #neigh = KNeighborsClassifier(n_neighbors=4)
+    #neigh.fit(trainX, trainY) 
+    #accKNN = neigh.score(testX, testY,  sample_weight=beta_fixed)
+    #print("KNN ACC WITH:", accKNN)
+
+    # BernoulliNB With KMM 
+    nb = BernoulliNB()
+    nb.fit(trainX, trainY, sample_weight=beta)
+    result = nb.predict(testX)
+    accNB = checkAccuracy(result, testY)
+    print("Naive Bayes ACC WITH:", accNB)
+    # BernoulliNB Without KMM 
+    nb = BernoulliNB()
+    nb.fit(trainX, trainY, sample_weight=beta_fixed)
+    result = nb.predict(testX)
+    accNB2 = checkAccuracy(result, testY)
+    print("Naive Bayes ACC WITH:", accNB2)
+
     # Tune parameters here...
     csf = svm.SVC(C=float(svmParam['c']), kernel='rbf', gamma=float(svmParam['g']), probability=True)
     csf.fit(trainX, trainY, sample_weight=beta)
-
-    beta_fixed = getFixedBeta(FixedBetaValue, len(trainX))
+    # without kmm beta
     csf2 = svm.SVC(C=float(svmParam['c']), kernel='rbf', gamma=float(svmParam['g']), probability=False)
     csf2.fit(trainX, trainY, sample_weight=beta_fixed)
 
@@ -148,13 +187,13 @@ def buildModel(trainX, trainY, beta, testX, testY, svmParam, maxvar):
     result2 = csf2.predict(testX)
     acc2 = checkAccuracy(result2, testY)
 
-    return (acc, acc2)
+    return (acc, acc2, accDT, accDT2, accNB, accNB2)
 
 def train2(trainX, trainY, testX, testY, maxvar):
     svmParam = {'c': 131072, 'g': 0.0001}
 
     beta = getBeta(trainX, testX, maxvar)
-    print("beta:", beta[0])
+    print("np.mean(beta):", numpy.mean(beta))
     # Model training
     result = buildModel(trainX, trainY, beta, testX, testY, svmParam, maxvar)
     return result
@@ -165,62 +204,83 @@ def train2(trainX, trainY, testX, testY, maxvar):
 ### traindata = lists within a list, 320x5845
 ### maxvar = int, 5844
 ### trainX = lists within a list, 320x5844
-positions = ['ankle', 'wrist', 'chest']    
-WINDOW = 3000
 
 
 ###
 ### DIFERENT AGE
 ###
-
 def dif_ages():
     output = pd.DataFrame()
     for pos in positions:
-        train_pos = pos 
-        print("\n", train_pos)
-        train = pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 01_' + train_pos + '.csv')
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 02_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 03_' + train_pos + '.csv'))
-        #train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 04_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 05_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 06_' + train_pos + '.csv'))
-        #train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 07_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 08_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 09_' + train_pos + '.csv'))
-        #train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 10_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 11_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 12_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 13_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 14_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 15_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 16_' + train_pos + '.csv'))
-        train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 17_' + train_pos + '.csv'))
+        for i in range(0, 5):
+            train_pos = pos 
+            print("\n", train_pos)
+            train = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 01_' + train_pos + '.csv')
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 02_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 03_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 04_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 05_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 06_' + train_pos + '.csv'))
+            #train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 07_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 08_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 09_' + train_pos + '.csv'))
+            #train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 10_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 11_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 12_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 13_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 14_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 15_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 16_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
+            # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+            train1 = train[train['label'].isin(['Walking'])]
+            train1 = train1.append(train[train['label'].isin(['Sitting'])])
+            train1 = train1.append(train[train['label'].isin(['Bending'])])
+            train1 = train1.append(train[train['label'].isin(['Hopping'])])
+            train = train1
+            #
+            trainX = train.drop('label', 1)
+            trainY = train['label']
+            test = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 07_'+ train_pos +'.csv')
+            test = test.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 10_' + train_pos + '.csv'))
+            # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+            test1 = test[test['label'].isin(['Walking'])]
+            test1 = test1.append(test[test['label'].isin(['Sitting'])])
+            test1 = test1.append(test[test['label'].isin(['Bending'])])
+            test1 = test1.append(test[test['label'].isin(['Hopping'])])
+            test = test1
+            #
+            testX = test.drop('label', 1)
+            testY = test['label']
+            #
+            trainX = trainX.values.tolist()
+            trainY = trainY.values.tolist()
+            testX = testX.values.tolist()
+            testY = testY.values.tolist()
+            #
+            print(len(train.columns), len(test.columns))
+            print(len(trainX), len(testX))
+            print(set(trainY), set(testY))
+            print(type(trainX))
+            #
+            res = train2(trainX, trainY, testX, testY, len(trainX[0]))
+            print("the accuracy with KMM"+str(res[0]))
+            print("the accuracy without KMM"+str(res[1]))
 
-        trainX = train.drop('label', 1)
-        trainY = train['label']
-        test = pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 04_'+ train_pos +'.csv')
-
-        testX = test.drop('label', 1)
-        testY = test['label']
-        #
-        trainX = trainX.values.tolist()
-        trainY = trainY.values.tolist()
-        testX = testX.values.tolist()
-        testY = testY.values.tolist()
-        #
-        print(len(train.columns), len(test.columns))
-        print(len(trainX), len(testX))
-        print(set(trainY), set(testY))
-        print(type(trainX))
-        #
-        res = train2(trainX, trainY, testX, testY, len(trainX[0]))
-        print("the accuracy with KMM"+str(res[0]))
-        print("the accuracy without KMM"+str(res[1]))
-
-        #print(ty)
-        output = output.append(pd.DataFrame([{'pos': str(train_pos), 'window': str(WINDOW), 'accWithKMM': str(res[0]), 'accWithoutKMM': str(res[1]) }]))
+            #print(ty)
+            output = output.append(pd.DataFrame([{'pos': str(train_pos), 
+            'window': str(WINDOW), 
+            'SVM_accWithKMM': str(res[0]), 
+            'SVM_accWithoutKMM': str(res[1]),
+            'DT_accWithKMM': str(res[2]), 
+            'DT_accWithoutKMM': str(res[3]) ,
+            'NB_accWithKMM': str(res[4]), 
+            'NB_accWithoutKMM': str(res[5])  
+            }]))
     return output
 
+positions = ['ankle', 'wrist', 'chest']    
+WINDOW = '3000'
 res = dif_ages();
 filename = "dif-ages_" + str(WINDOW) + "-ms.csv"
 res.to_csv(filename, sep=';')
@@ -238,28 +298,40 @@ def dif_positions():
                 continue
 
             print("\n", train_pos, test_pos)
-            train = pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 01_' + train_pos + '.csv')
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 02_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 03_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 04_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 05_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 06_' + train_pos + '.csv'))
-            #train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 07_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 08_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 09_' + train_pos + '.csv'))
-            #train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 10_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 11_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 12_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 13_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 14_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 15_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 16_' + train_pos + '.csv'))
-            train = train.append(pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 17_' + train_pos + '.csv'))
-
+            train = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 01_' + train_pos + '.csv')
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 02_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 03_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 04_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 05_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 06_' + train_pos + '.csv'))
+            #train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 07_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 08_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 09_' + train_pos + '.csv'))
+            #train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 10_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 11_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 12_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 13_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 14_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 15_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 16_' + train_pos + '.csv'))
+            train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
+            # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+            train1 = train[train['label'].isin(['Walking'])]
+            train1 = train1.append(train[train['label'].isin(['Sitting'])])
+            train1 = train1.append(train[train['label'].isin(['Bending'])])
+            train1 = train1.append(train[train['label'].isin(['Hopping'])])
+            train = train1
+            #
             trainX = train.drop('label', 1)
             trainY = train['label']
-            test = pd.read_csv('../../ANSAMO DATASET/window_2500ms_Subject 04_' + test_pos + '.csv')
-
+            test = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 04_' + test_pos + '.csv')
+            # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+            test1 = test[test['label'].isin(['Walking'])]
+            test1 = test1.append(test[test['label'].isin(['Sitting'])])
+            test1 = test1.append(test[test['label'].isin(['Bending'])])
+            test1 = test1.append(test[test['label'].isin(['Hopping'])])
+            test = test1
+            #
             testX = test.drop('label', 1)
             testY = test['label']
             #
@@ -276,3 +348,84 @@ def dif_positions():
             res = train2(trainX, trainY, testX, testY, len(trainX[0]))
             print("the accuracy with KMM"+str(res[0]))
             print("the accuracy without KMM"+str(res[1]))
+
+
+
+###
+###
+###
+'''
+train_pos = 'wrist' 
+WINDOW = '2500'
+print("\n", train_pos)
+train = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 01_' + train_pos + '.csv')
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 02_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 03_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 04_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 05_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 06_' + train_pos + '.csv'))
+#train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 07_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 08_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 09_' + train_pos + '.csv'))
+#train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 10_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 11_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 12_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 13_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 14_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 15_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 16_' + train_pos + '.csv'))
+train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
+# remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+train1 = train[train['label'].isin(['Walking'])]
+train1 = train1.append(train[train['label'].isin(['Sitting'])])
+train1 = train1.append(train[train['label'].isin(['Bending'])])
+train1 = train1.append(train[train['label'].isin(['Hopping'])])
+#train1 = train1.append(train[train['label'].isin(['Jogging'])])
+train = train1
+#
+trainX = train.drop('label', 1)
+trainY = train['label']
+test = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 07_'+ train_pos +'.csv')
+test = test.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 10_' + train_pos + '.csv'))
+
+# remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+test1 = test[test['label'].isin(['Walking'])]
+test1 = test1.append(test[test['label'].isin(['Sitting'])])
+test1 = test1.append(test[test['label'].isin(['Bending'])])
+test1 = test1.append(test[test['label'].isin(['Hopping'])])
+#test1 = test1.append(test[test['label'].isin(['Jogging'])])
+test = test1
+#
+testX = test.drop('label', 1)
+testY = test['label']
+
+######################
+######### pca ########
+######################
+#pca = PCA(n_components=2)
+#testX = pca.fit_transform(testX)
+#pca = PCA(n_components=2)
+#trainX = pca.fit_transform(trainX)
+#trainX = trainX.tolist()
+#trainY = trainY.values.tolist()
+#testX = testX.tolist()
+#testY = testY.values.tolist()
+
+######################
+##### if witouth pca ########
+######################
+trainX = trainX.values.tolist()
+trainY = trainY.values.tolist()
+testX = testX.values.tolist()
+testY = testY.values.tolist()
+
+#
+print(len(train.columns), len(test.columns))
+print(len(trainX), len(testX))
+print(set(trainY), set(testY))
+#print(type(trainX))
+#
+res = train2(trainX, trainY, testX, testY, len(trainX[0]))
+print("the accuracy with KMM"+str(res[0]))
+print("the accuracy without KMM"+str(res[1]))
+'''
