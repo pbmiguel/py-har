@@ -22,8 +22,8 @@ def checkAccuracy(result, testY):
 
 positions = ['ankle', 'wrist', 'chest']    
 WINDOW = '3000'
-train_pos = positions[1]
-test_pos = positions[1]
+train_pos = positions[0]
+test_pos = positions[0]
 #
 train = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 01_' + train_pos + '.csv')
 train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 02_' + train_pos + '.csv'))
@@ -63,15 +63,101 @@ test = test1
 testX = test.drop('label', 1)
 testY = test['label']
 #
+#
+#
+'''
+Importance-weighted classifier, with weight estimators:
+    1. Kernel density estimation 
+    2. Ratio of Gaussians (Shimodaira, 2000) 
+    3. Logistic discrimination (Bickel et al., 2009) 
+    4. Kernel Mean Matching (Huang et al., 2006) 
+    5. Nearest-neighbour-based weighting (Loog, 2015) 
+6. Transfer Component Analysis (Pan et al, 2009) 
+7. Subspace Alignment (Fernando et al., 2013) 
+8. Structural Correspondence Learning (Blitzer et al., 2006) 
+9. Robust Bias-Aware (Liu & Ziebart, 2014) 
+10. Feature-Level Domain Adaptation (Kouw et al., 2016) 
+'''
+
+
+### Kernel density estimation 
+#print("\nKernel density estimation")
+#classifier = ImportanceWeightedClassifier(iwe='kde')
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+### Ratio of Gaussians (Shimodaira, 2000)  
+#print("\n Ratio of Gaussians (Shimodaira, 2000) ")
+#classifier = ImportanceWeightedClassifier(iwe='rg')
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+### Logistic discrimination (Bickel et al., 2009) 
+#print("\n Logistic discrimination (Bickel et al., 2009)  ")
+#classifier = ImportanceWeightedClassifier(iwe='rg')
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+
+### Kernel Mean Matching (Huang et al., 2006) 
+print("\n Kernel Mean Matching (Huang et al., 2006)   ")
+classifier = ImportanceWeightedClassifier(iwe='kmm')
+classifier.fit(trainX, trainY, testX)
+pred_naive = classifier.predict(testX)
+acc = checkAccuracy(testY, pred_naive)
+print("ACC:", acc);
+
+### Nearest-neighbour-based weighting (Loog, 2015)  
+print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
+classifier = ImportanceWeightedClassifier(iwe='nn')
+classifier.fit(trainX, trainY, testX)
+pred_naive = classifier.predict(testX)
+acc = checkAccuracy(testY, pred_naive)
+print("ACC:", acc);
+
+
+### Transfer Component Analysis (Pan et al, 2009) 
+print("\nTransfer Component Analysis (Pan et al, 2009)")
 classifier = TransferComponentClassifier()
 classifier.fit(trainX, trainY, testX)
 pred_naive = classifier.predict(testX)
 acc = checkAccuracy(testY, pred_naive)
 print("ACC:", acc);
 
-# Compute error rates
-#err_naive = np.mean(pred_naive != u, axis=0)
-#err_adapt = np.mean(pred_adapt != u, axis=0)
-# Report results
-#print('Error naive: ' + str(err_naive))
-#print('Error adapt: ' + str(err_adapt))
+### Subspace Alignment (Fernando et al., 2013) 
+print("\n Subspace Alignment (Fernando et al., 2013) ")
+classifier = SubspaceAlignedClassifier()
+classifier.fit(trainX, trainY, testX)
+pred_naive = classifier.predict(testX)
+acc = checkAccuracy(testY, pred_naive)
+print("ACC:", acc);
+
+### Structural Correspondence Learning (Blitzer et al., 2006)  
+#print("\n Structural Correspondence Learning (Blitzer et al., 2006)  ")
+#classifier = StructuralCorrespondenceClassifier()
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+### Robust Bias-Aware (Liu & Ziebart, 2014)  
+#print("\n Robust Bias-Aware (Liu & Ziebart, 2014)   ")
+#classifier = RobustBiasAwareClassifier()
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+### R Feature-Level Domain Adaptation (Kouw et al., 2016) 
+#print("\n  Feature-Level Domain Adaptation (Kouw et al., 2016)    ")
+#classifier = FeatureLevelDomainAdaptiveClassifier()
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
