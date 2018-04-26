@@ -185,3 +185,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+Unsupervised Domain Adaptation Demo/Kernel Mean Matching/2_KMM/py-kmm
+Unsupervised Domain Adaptation Demo/Kernel Mean Matching/2_KMM/py-kmm
+Unsupervised Domain Adaptation Demo/Kernel Mean Matching/3_KMM/Classification-using-KMM-Kernel-Mean-Matching-
+Unsupervised Domain Adaptation in HAR/4_KMM/.gitattributes
