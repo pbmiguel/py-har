@@ -7,6 +7,12 @@ from libtlda.flda import FeatureLevelDomainAdaptiveClassifier
 from libtlda.tcpr import TargetContrastivePessimisticClassifier
 # https://github.com/wmkouw/libTLDA
 
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn import tree
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import BernoulliNB
+
 import pandas as pd
 import numpy as np
 
@@ -17,7 +23,7 @@ def checkAccuracy(result, testY):
             p += 1
     acc = p * 100 / len(result)
     # print(result)
-    print("ACC:{0}%, Total:{1}/{2} with positive {3}".format(acc, len(result), len(testY), p))
+    #print("ACC:{0}%, Total:{1}/{2} with positive {3}".format(acc, len(result), len(testY), p))
     return acc
 
 positions = ['ankle', 'wrist', 'chest']    
@@ -123,12 +129,13 @@ print("ACC:", acc);
 
 
 ### Transfer Component Analysis (Pan et al, 2009) 
-print("\nTransfer Component Analysis (Pan et al, 2009)")
+print("\n Transfer Component Analysis (Pan et al, 2009)")
 classifier = TransferComponentClassifier()
 classifier.fit(trainX, trainY, testX)
 pred_naive = classifier.predict(testX)
 acc = checkAccuracy(testY, pred_naive)
-print("ACC:", acc);
+print("ACC:", acc)
+
 
 ### Subspace Alignment (Fernando et al., 2013) 
 print("\n Subspace Alignment (Fernando et al., 2013) ")
@@ -161,3 +168,33 @@ print("ACC:", acc);
 #pred_naive = classifier.predict(testX)
 #acc = checkAccuracy(testY, pred_naive)
 #print("ACC:", acc);
+
+### TargetContrastivePessimisticClassifier
+#print("\n  TargetContrastivePessimisticClassifier    ")
+#classifier = TargetContrastivePessimisticClassifier()
+#classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc);
+
+
+
+# LogisticRegression 
+modelLR = LogisticRegression()
+modelLR.fit(trainX, trainY)
+predLR = modelLR.predict(testX)
+accLR = checkAccuracy(testY, predLR)
+
+# DecisionTreeClassifier
+modelDT = tree.DecisionTreeClassifier()
+modelDT.fit(trainX, trainY)
+predDT = modelDT.predict(testX)
+accDT = checkAccuracy(testY, predDT)
+
+# BernoulliNB
+modelNB = BernoulliNB()
+modelNB.fit(trainX, trainY)
+predND = modelNB.predict(testX)
+accNB = checkAccuracy(testY, predND)
+
+print("WITHOUT TL ACC_LR:", accLR, " ACC_DT:", accDT, " ACC_NB:", accNB)
