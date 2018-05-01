@@ -265,19 +265,19 @@ def ANSAMO_AGE():
             ###
             # Decision Tree
             print("\n Transfer Component Analysis (Pan et al, 2009)")
-            classifier = TransferComponentClassifier(loss="dtree")
+            classifier = TransferComponentClassifier(loss="dtree", num_components=6)
             classifier.fit(trainX, trainY, testX)
             pred_naive = classifier.predict(testX)
             acc_DT_TCA = checkAccuracy(testY, pred_naive)
             print("ACC:", acc_DT_TCA)
             # Logistic Regression
-            classifier = TransferComponentClassifier(loss="logistic")
+            classifier = TransferComponentClassifier(loss="logistic", num_components=6)
             classifier.fit(trainX, trainY, testX)
             pred_naive = classifier.predict(testX)
             acc_LR_TCA = checkAccuracy(testY, pred_naive)
             print("ACC:", acc_LR_TCA)
             # Naive Bayes Bernoulli
-            classifier = TransferComponentClassifier(loss="berno")
+            classifier = TransferComponentClassifier(loss="berno", num_components=6)
             classifier.fit(trainX, trainY, testX)
             pred_naive = classifier.predict(testX)
             acc_NB_TCA = checkAccuracy(testY, pred_naive)
@@ -550,4 +550,5 @@ def ANSAMO_POS():
                 ));
     file_content.to_csv('POS-ANSAMO.csv', sep=';');
 
-ANSAMO_POS()
+ANSAMO_AGE()
+#ANSAMO_POS()
