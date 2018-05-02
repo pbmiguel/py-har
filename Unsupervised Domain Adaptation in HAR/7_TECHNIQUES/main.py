@@ -510,133 +510,133 @@ def ANSAMO_POS():
                 # BALANCE DATA
                 trainX, trainY = balance_dataset(trainX, trainY)
                 print("Normalizing and Balancing Data")
-               ########################
-            #### WITHOUT TL ########
-            ########################
-            # LogisticRegression 
-            modelLR = LogisticRegression()
-            modelLR.fit(trainX, trainY)
-            predLR = modelLR.predict(testX)
-            accLR, acc_LR_INFO = checkAccuracy(testY, predLR)
-            # DecisionTreeClassifier
-            modelDT = tree.DecisionTreeClassifier()
-            modelDT.fit(trainX, trainY)
-            predDT = modelDT.predict(testX)
-            accDT, acc_DT_INFO = checkAccuracy(testY, predDT)
-            # BernoulliNB
-            modelNB = BernoulliNB()
-            modelNB.fit(trainX, trainY)
-            predND = modelNB.predict(testX)
-            accNB, acc_NB_INFO = checkAccuracy(testY, predND)
-            #
-            print("WITHOUT TL ACC_LR:", accLR, " ACC_DT:", accDT, " ACC_NB:", accNB)
-            ########################
-            #### WITH TL ########
-            ########################
+                ########################
+                #### WITHOUT TL ########
+                ########################
+                # LogisticRegression 
+                modelLR = LogisticRegression()
+                modelLR.fit(trainX, trainY)
+                predLR = modelLR.predict(testX)
+                accLR, acc_LR_INFO = checkAccuracy(testY, predLR)
+                # DecisionTreeClassifier
+                modelDT = tree.DecisionTreeClassifier()
+                modelDT.fit(trainX, trainY)
+                predDT = modelDT.predict(testX)
+                accDT, acc_DT_INFO = checkAccuracy(testY, predDT)
+                # BernoulliNB
+                modelNB = BernoulliNB()
+                modelNB.fit(trainX, trainY)
+                predND = modelNB.predict(testX)
+                accNB, acc_NB_INFO = checkAccuracy(testY, predND)
+                #
+                print("WITHOUT TL ACC_LR:", accLR, " ACC_DT:", accDT, " ACC_NB:", accNB)
+                ########################
+                #### WITH TL ########
+                ########################
 
-            ####################################################
-            ### Kernel Mean Matching (Huang et al., 2006) 
-            ###
-            # Decision Tree
-            print("\n Kernel Mean Matching (Huang et al., 2006) ")
-            classifier = ImportanceWeightedClassifier(iwe='kmm', loss="dtree")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_DT_KMM, acc_DT_KMM_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_DT_KMM)
-            # Logistic Regression
-            classifier = ImportanceWeightedClassifier(iwe='kmm', loss="logistic")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_LR_KMM, acc_LR_KMM_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_LR_KMM);
-            # Naive Bayes Bernoulli
-            classifier = ImportanceWeightedClassifier(iwe='kmm', loss="berno")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_NB_KMM, acc_NB_KMM_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_NB_KMM);
-            ####################################################
-            ### Nearest-neighbour-based weighting (Loog, 2015)  
-            ###
-            # Decision Tree
-            print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
-            classifier = ImportanceWeightedClassifier(iwe='nn', loss="dtree")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_DT_NN, acc_DT_NN_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_DT_NN)
-            # Logistic Regression
-            print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
-            classifier = ImportanceWeightedClassifier(iwe='nn', loss="logistic")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_LR_NN, acc_LR_NN_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_LR_NN)        
-            # Naive Bayes Bernoulli
-            print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
-            classifier = ImportanceWeightedClassifier(iwe='nn', loss="berno")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_NB_NN, acc_NB_NN_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_NB_NN)     
+                ####################################################
+                ### Kernel Mean Matching (Huang et al., 2006) 
+                ###
+                # Decision Tree
+                print("\n Kernel Mean Matching (Huang et al., 2006) ")
+                classifier = ImportanceWeightedClassifier(iwe='kmm', loss="dtree")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_DT_KMM, acc_DT_KMM_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_DT_KMM)
+                # Logistic Regression
+                classifier = ImportanceWeightedClassifier(iwe='kmm', loss="logistic")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_LR_KMM, acc_LR_KMM_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_LR_KMM);
+                # Naive Bayes Bernoulli
+                classifier = ImportanceWeightedClassifier(iwe='kmm', loss="berno")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_NB_KMM, acc_NB_KMM_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_NB_KMM);
+                ####################################################
+                ### Nearest-neighbour-based weighting (Loog, 2015)  
+                ###
+                # Decision Tree
+                print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
+                classifier = ImportanceWeightedClassifier(iwe='nn', loss="dtree")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_DT_NN, acc_DT_NN_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_DT_NN)
+                # Logistic Regression
+                print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
+                classifier = ImportanceWeightedClassifier(iwe='nn', loss="logistic")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_LR_NN, acc_LR_NN_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_LR_NN)        
+                # Naive Bayes Bernoulli
+                print("\n Nearest-neighbour-based weighting (Loog, 2015)    ")
+                classifier = ImportanceWeightedClassifier(iwe='nn', loss="berno")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_NB_NN, acc_NB_NN_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_NB_NN)     
 
-            ####################################################
-            ### Transfer Component Analysis (Pan et al, 2009) 
-            ###
-            # Decision Tree
-            print("\n Transfer Component Analysis (Pan et al, 2009)")
-            classifier = TransferComponentClassifier(loss="dtree", num_components=6)
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_DT_TCA, acc_DT_TCA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_DT_TCA)
-            # Logistic Regression
-            classifier = TransferComponentClassifier(loss="logistic", num_components=6)
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_LR_TCA, acc_LR_TCA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_LR_TCA)
-            # Naive Bayes Bernoulli
-            classifier = TransferComponentClassifier(loss="berno", num_components=6)
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_NB_TCA, acc_NB_TCA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_NB_TCA)
+                ####################################################
+                ### Transfer Component Analysis (Pan et al, 2009) 
+                ###
+                # Decision Tree
+                print("\n Transfer Component Analysis (Pan et al, 2009)")
+                classifier = TransferComponentClassifier(loss="dtree", num_components=6)
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_DT_TCA, acc_DT_TCA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_DT_TCA)
+                # Logistic Regression
+                classifier = TransferComponentClassifier(loss="logistic", num_components=6)
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_LR_TCA, acc_LR_TCA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_LR_TCA)
+                # Naive Bayes Bernoulli
+                classifier = TransferComponentClassifier(loss="berno", num_components=6)
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_NB_TCA, acc_NB_TCA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_NB_TCA)
 
-            ####################################################
-            ### Subspace Alignment (Fernando et al., 2013) 
-            ###
-            # Decision Tree
-            print("\n Subspace Alignment (Fernando et al., 2013) ")
-            classifier = SubspaceAlignedClassifier(loss="dtree")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_DT_SA, acc_DT_SA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_DT_SA);
-            # Logistic Regression
-            print("\n Subspace Alignment (Fernando et al., 2013) ")
-            classifier = SubspaceAlignedClassifier(loss="logistic")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_LR_SA, acc_LR_SA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_LR_SA);        
-            # Naive Bayes Bernoulli        
-            print("\n Subspace Alignment (Fernando et al., 2013) ")
-            classifier = SubspaceAlignedClassifier(loss="berno")
-            classifier.fit(trainX, trainY, testX)
-            pred_naive = classifier.predict(testX)
-            acc_NB_SA, acc_NB_SA_INFO = checkAccuracy(testY, pred_naive)
-            print("ACC:", acc_NB_SA);     
-            
-            ########################
-            #### WRITE TO FILE ########
-            ########################
-            file_content = file_content.append(pd.DataFrame(
-                [{ 
-                'window': WINDOW,
-                'train_position': train_pos,
-                'test_position': test_pos,
+                ####################################################
+                ### Subspace Alignment (Fernando et al., 2013) 
+                ###
+                # Decision Tree
+                print("\n Subspace Alignment (Fernando et al., 2013) ")
+                classifier = SubspaceAlignedClassifier(loss="dtree")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_DT_SA, acc_DT_SA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_DT_SA);
+                # Logistic Regression
+                print("\n Subspace Alignment (Fernando et al., 2013) ")
+                classifier = SubspaceAlignedClassifier(loss="logistic")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_LR_SA, acc_LR_SA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_LR_SA);        
+                # Naive Bayes Bernoulli        
+                print("\n Subspace Alignment (Fernando et al., 2013) ")
+                classifier = SubspaceAlignedClassifier(loss="berno")
+                classifier.fit(trainX, trainY, testX)
+                pred_naive = classifier.predict(testX)
+                acc_NB_SA, acc_NB_SA_INFO = checkAccuracy(testY, pred_naive)
+                print("ACC:", acc_NB_SA);     
+                
+                ########################
+                #### WRITE TO FILE ########
+                ########################
+                file_content = file_content.append(pd.DataFrame(
+                    [{ 
+                    'window': WINDOW,
+                    'train_position': train_pos,
+                    'test_position': test_pos,
                 'acc_LR':accLR,
                 'acc_LR_INFO': str(acc_LR_INFO),
                 'acc_DT': accDT,
