@@ -12,7 +12,13 @@ from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.naive_bayes import BernoulliNB
-
+from sklearn.preprocessing import normalize
+###
+### smote, http://contrib.scikit-learn.org/imbalanced-learn/stable/auto_examples/over-sampling/plot_smote.html
+###
+from collections import Counter
+from imblearn.over_sampling import SMOTE 
+#
 import pandas as pd
 import numpy as np
 
@@ -25,6 +31,25 @@ def checkAccuracy(result, testY):
     # print(result)
     #print("ACC:{0}%, Total:{1}/{2} with positive {3}".format(acc, len(result), len(testY), p))
     return acc
+
+# without labels, only with numerical columns
+def normalize_dataset(dataset):
+    out = pd.DataFrame()
+    x = dataset.copy()
+    for i in x.columns:
+        #print(i)
+        new_col = normalize([x[i]], axis=1, norm='max').ravel()
+        out['norm_' + i] = new_col
+    return out
+
+def balance_dataset(X, Y):
+    #print('Original dataset shape {}'.format(Counter(Y)))
+    #Original dataset shape Counter({1: 900, 0: 100})
+    sm = SMOTE(random_state=42)
+    X_res, y_res = sm.fit_sample(X, Y)
+    #print('Resampled dataset shape {}'.format(Counter(y_res)))
+    #Resampled dataset shape Counter({0: 900, 1: 900})
+    return X_res, y_res
 
 
 '''
@@ -189,6 +214,12 @@ def ANSAMO_AGE():
             #
             testX = test.drop('label', 1)
             testY = test['label']
+            # NORMALIZE
+            trainX = normalize_dataset(trainX)
+            testX = normalize_dataset(testX)
+            # BALANCE DATA
+            trainX, trainY = balance_dataset(trainX, trainY)
+            print("Normalizing and Balancing Data")
             ########################
             #### WITHOUT TL ########
             ########################
@@ -401,7 +432,13 @@ def ANSAMO_POS():
                 #
                 testX = test.drop('label', 1)
                 testY = test['label']
-                            ########################
+                # NORMALIZE
+                trainX = normalize_dataset(trainX)
+                testX = normalize_dataset(testX)
+                # BALANCE DATA
+                trainX, trainY = balance_dataset(trainX, trainY)
+                print("Normalizing and Balancing Data")
+                ########################
                 #### WITHOUT TL ########
                 ########################
                 # LogisticRegression 
@@ -552,3 +589,28 @@ def ANSAMO_POS():
 
 ANSAMO_AGE()
 #ANSAMO_POS()
+
+
+
+'''
+#### Experiments 
+WINDOW = '2500'
+train_pos = 'ankle'
+train = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 01_' + train_pos + '.csv')                 
+# remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
+train1 = train[train['label'].isin(['Walking'])]
+train1 = train1.append(train[train['label'].isin(['Sitting'])])
+train1 = train1.append(train[train['label'].isin(['Bending'])])
+train1 = train1.append(train[train['label'].isin(['Hopping'])])
+train1 = train1.append(train[train['label'].isin(['Jogging'])])
+#train1 = train1.append(train[train['label'].isin(['GoUpstairs'])])
+train = train1
+#
+trainX = train.drop('label', 1)
+trainY = train['label']
+#
+print('Resampled dataset shape {}'.format(Counter(trainY)))
+trainX, trainY = balance_dataset(trainX, trainY)
+print('Resampled dataset shape {}'.format(Counter(trainY)))
+
+'''
