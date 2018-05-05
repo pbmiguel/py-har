@@ -1,31 +1,26 @@
-'''import numpy as np
+from sklearn import datasets
+
+iris = datasets.load_iris()
+X, y = iris.data[:, 1:3], iris.target
+
+from sklearn import cross_validation
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 
-clf1 = LogisticRegression(random_state=1)
-clf2 = RandomForestClassifier(random_state=1)
+np.random.seed(123)
+
+clf1 = LogisticRegression()
+clf2 = RandomForestClassifier()
 clf3 = GaussianNB()
 
-X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
-y = np.array([1, 1, 1, 2, 2, 2])
+print('5-fold cross validation:\n')
 
-eclf1 = VotingClassifier(estimators=[         ('lr', clf1), ('rf', clf2), ('gnb', clf3)], voting='hard')
-eclf1 = eclf1.fit(X, y)
-print(eclf1.predict(X))
+for clf, label in zip([clf1, clf2, clf3], ['Logistic Regression', 'Random Forest', 'naive Bayes']):
 
-eclf2 = VotingClassifier(estimators=[         ('lr', clf1), ('rf', clf2), ('gnb', clf3)],         voting='soft')
-eclf2 = eclf2.fit(X, y)
-print(eclf2.predict(X))
-
-eclf3 = VotingClassifier(estimators=[
-    ('lr', clf1), ('rf', clf2), ('gnb', clf3)],
-    voting='soft', weights=[2,1,1],
-    flatten_transform=True)
-eclf3 = eclf3.fit(X, y)
-
-print(eclf3.predict(X))
-print(eclf3.transform(X).shape)'''
+    scores = cross_validation.cross_val_score(clf, X, y, cv=5, scoring='accuracy')
+    print("Accuracy: %0.2f (+/- %0.2f) [%s]" % (scores.mean(), scores.std(), label))
 
 from sklearn.base import BaseEstimator
 from sklearn.base import ClassifierMixin
@@ -51,7 +46,7 @@ class EnsembleClassifier(BaseEstimator, ClassifierMixin):
         self.clfs = clfs
         self.weights = weights
 
-    def fit(self, X, y, Z):
+    def fit(self, X, y):
         """
         Fit the scikit-learn estimators.
 
@@ -65,7 +60,7 @@ class EnsembleClassifier(BaseEstimator, ClassifierMixin):
 
         """
         for clf in self.clfs:
-            clf.fit(X, y, Z)
+            clf.fit(X, y)
 
     def predict(self, X):
         """
@@ -113,32 +108,13 @@ class EnsembleClassifier(BaseEstimator, ClassifierMixin):
 
         return avg
 
-from sklearn import cross_validation
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier
-import numpy as np
-import pandas as pd
-from sklearn import datasets
-from libtlda.iw import ImportanceWeightedClassifier
-from libtlda.tca import TransferComponentClassifier
-from libtlda.suba import SubspaceAlignedClassifier
-from libtlda.scl import StructuralCorrespondenceClassifier
-from libtlda.rba import RobustBiasAwareClassifier
-from libtlda.flda import FeatureLevelDomainAdaptiveClassifier
-from libtlda.tcpr import TargetContrastivePessimisticClassifier
-# https://github.com/wmkouw/libTLDA
+'''
 
-from sklearn.linear_model import LogisticRegression, LinearRegression
-from sklearn import tree
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.naive_bayes import BernoulliNB
-from sklearn.preprocessing import normalize
-from sklearn.metrics import confusion_matrix
-###
-### smote, http://contrib.scikit-learn.org/imbalanced-learn/stable/auto_examples/over-sampling/plot_smote.html
-###
+###################
+### LOAD DATA ######
+####################
+
+import pandas as pd 
 
 WINDOW = '3000'
 train_pos = 'chest'
@@ -187,33 +163,16 @@ test = test1
 #
 testX = test.drop('label', 1)
 testY = test['label']
-# NORMALIZE
-#print(trainX.describe())
-#trainX = normalize_dataset(trainX)
-#testX = normalize_dataset(testX)
-#print(trainX.describe())
-# BALANCE DATA
-#trainX, trainY = balance_dataset(trainX, trainY)
 #
 
-########################
-#### WITHOUT TL ########
-########################
-# Decision Tree
-#print("\n Subspace Alignment (Fernando et al., 2013) ")
-classifier_SA = SubspaceAlignedClassifier(loss="dtree")
-#classifier_SA.fit(trainX, trainY, testX)
-#pred_naive = classifier.predict(testX)
-#acc_DT_SA, acc_DT_SA_INFO = checkAccuracy(testY, pred_naive)
-#print("ACC:", acc_DT_SA);
-# Logistic Regression
-#print("\n Subspace Alignment (Fernando et al., 2013) ")
-classifier = SubspaceAlignedClassifier(loss="logistic")
-#classifier.fit(trainX, trainY, testX)
-#pred_naive = classifier.predict(testX)
-#acc_LR_SA, acc_LR_SA_INFO = checkAccuracy(testY, pred_naive)
-#print("ACC:", acc_LR_SA); 
+#clf1.fit(trainX, trainY)
+#clf1.
+#eclf = EnsembleClassifier(clfs=[clf1, clf2, clf3], weights=[1,1,1])
+#eclf.fit(trainX, trainY)
+#eclf.predict(testX)
+
+#for clf, label in zip([clf3, eclf], ['naive Bayes', 'Ensemble']):
 #
-eclf = EnsembleClassifier(clfs=[classifier_SA, classifier], weights=[1,1])
-eclf.fit(trainX, trainY, testX)
-pred = eclf.predict(testX)
+#    scores = cross_validation.cross_val_score(clf, trainX, trainY, cv=5, scoring='accuracy')
+#    #print("Accuracy: %0.2f (+/- %0.2f) [%s]" % (scores.mean(), scores.std(), label))
+# '''

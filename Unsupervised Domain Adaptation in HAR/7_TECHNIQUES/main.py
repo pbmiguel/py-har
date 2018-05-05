@@ -26,6 +26,8 @@ from sklearn.metrics import classification_report
 #
 from sklearn.semi_supervised import LabelPropagation
 from sklearn.semi_supervised import LabelSpreading
+# ENSEMBLE
+from sklearn.ensemble import VotingClassifier
 #
 
 def checkAccuracy(result, testY):
@@ -317,7 +319,7 @@ def build_models(trainX, trainY, testX, testY, source_pos, target_pos, window):
     classifier.fit(trainX, trainY, testX)
     pred_naive = classifier.predict(testX)
     acc_NB_SA, acc_NB_SA_INFO = checkAccuracy(testY, pred_naive)
-    print("ACC:", acc_NB_SA);     
+    print("ACC:", acc_NB_SA);        
     ########################
     #### RETURN ########
     ########################
@@ -364,7 +366,7 @@ def build_models(trainX, trainY, testX, testY, source_pos, target_pos, window):
         'acc_NB_TCA': acc_NB_TCA,
         'acc_NB_TCA_INFO': str(acc_NB_TCA_INFO),                                                
         'acc_NB_SA': acc_NB_SA,
-        'acc_NB_SA_INFO': str(acc_NB_SA_INFO)                                                
+        'acc_NB_SA_INFO': str(acc_NB_SA_INFO)                                            
         }]
     );
 
@@ -494,7 +496,7 @@ def ANSAMO_POS():
     file_content.to_csv('POS-ANSAMO.csv', sep=';');
 
 
-ANSAMO_AGE()
+#ANSAMO_AGE()
 #ANSAMO_POS()
 
 #print(checkAccuracy(['A', 'A', 'A','A'], ['A', 'A', 'C', 'D']))
@@ -502,7 +504,7 @@ ANSAMO_AGE()
 #print(out)
 #print(out2)
 
-'''
+
 #### Experiments 
 WINDOW = '3000'
 train_pos = 'chest'
@@ -529,8 +531,8 @@ train = train.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 
 train1 = train[train['label'].isin(['Walking'])]
 train1 = train1.append(train[train['label'].isin(['Sitting'])])
 train1 = train1.append(train[train['label'].isin(['Bending'])])
-train1 = train1.append(train[train['label'].isin(['Hopping'])])
-train1 = train1.append(train[train['label'].isin(['Jogging'])])
+#train1 = train1.append(train[train['label'].isin(['Hopping'])])
+#train1 = train1.append(train[train['label'].isin(['Jogging'])])
 #train1 = train1.append(train[train['label'].isin(['GoUpstairs'])])
 train = train1
 #
@@ -538,13 +540,13 @@ trainX = train.drop('label', 1)
 trainY = train['label']
 #
 test = pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 04_'+ train_pos +'.csv')
-test = test.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
+#test = test.append(pd.read_csv('../ANSAMO DATASET/window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
 # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
 test1 = test[test['label'].isin(['Walking'])]
 test1 = test1.append(test[test['label'].isin(['Sitting'])])
 test1 = test1.append(test[test['label'].isin(['Bending'])])
-test1 = test1.append(test[test['label'].isin(['Hopping'])])
-test1 = test1.append(test[test['label'].isin(['Jogging'])])
+#test1 = test1.append(test[test['label'].isin(['Hopping'])])
+#test1 = test1.append(test[test['label'].isin(['Jogging'])])
 #test1 = test1.append(test[test['label'].isin(['GoDownstairs'])])
 #test1 = test1.append(test[test['label'].isin(['GoUpstairs'])])
 test = test1
@@ -560,7 +562,34 @@ testX = normalize_dataset(testX)
 trainX, trainY = balance_dataset(trainX, trainY)
 #
 
+########################
+#### WITHOUT TL ########
+########################
+# Decision Tree
+print("\n Subspace Alignment (Fernando et al., 2013) ")
+classifier_SA = SubspaceAlignedClassifier(loss="dtree")
+classifier_SA.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc_DT_SA, acc_DT_SA_INFO = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc_DT_SA);
+# Logistic Regression
+print("\n Subspace Alignment (Fernando et al., 2013) ")
+classifier = SubspaceAlignedClassifier(loss="logistic")
+classifier.fit(trainX, trainY, testX)
+#pred_naive = classifier.predict(testX)
+#acc_LR_SA, acc_LR_SA_INFO = checkAccuracy(testY, pred_naive)
+#print("ACC:", acc_LR_SA); 
+
+#
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+eclf1 = VotingClassifier(estimators=[ 
+    ('classifier_SA', classifier_SA), ('classifier', classifier)], voting='soft')
+#eclf1 = eclf1.fit(trainX, trainY)
+predEN = eclf1.score(testX, testY)
+accENSEMBLE, accENSEMBLE_INFO = checkAccuracy(testY, predEN)
+#
+print("WITHOUT TL ACC_LR:", accLR, " ACC_DT:", accDT, " ACC_NB:", accNB, " accENSEMBLE:", accENSEMBLE)
+
 
 #report = build_models(trainX, trainY, testX, testY, train_pos, test_pos);
 #report.to_csv('normal-experiment.csv', sep=';')
-'''
