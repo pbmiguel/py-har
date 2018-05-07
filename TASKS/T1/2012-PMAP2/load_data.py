@@ -243,9 +243,9 @@ def format(subject, content):
         'mag_y': column_mag_y_hand,
         'mag_z': column_mag_z_hand,
 
-        'ori_x': column_ori_x_hand,
-        'ori_y': column_ori_y_hand,
-        'ori_z': column_ori_z_hand
+        #'ori_x': column_ori_x_hand,
+        #'ori_y': column_ori_y_hand,
+        #'ori_z': column_ori_z_hand
     })
     # CHEST
     new_content = new_content.append(pd.DataFrame({
@@ -271,9 +271,9 @@ def format(subject, content):
         'mag_y': column_mag_y_chest,
         'mag_z': column_mag_z_chest,
 
-        'ori_x': column_ori_x_chest,
-        'ori_y': column_ori_y_chest,
-        'ori_z': column_ori_z_chest
+        #'ori_x': column_ori_x_chest,
+        #'ori_y': column_ori_y_chest,
+        #'ori_z': column_ori_z_chest
     }))
     # ANKLE
     new_content = new_content.append(pd.DataFrame({
@@ -299,12 +299,11 @@ def format(subject, content):
         'mag_y': column_mag_y_ankle,
         'mag_z': column_mag_z_ankle,
 
-        'ori_x': column_ori_x_ankle,
-        'ori_y': column_ori_y_ankle,
-        'ori_z': column_ori_z_ankle
+        #'ori_x': column_ori_x_ankle,
+        #'ori_y': column_ori_y_ankle,
+        #'ori_z': column_ori_z_ankle
     }))
-    print(len(new_content.columns))
-    print(len(new_content))
+    
     return new_content
 
 
@@ -314,16 +313,16 @@ from os import listdir
 from os.path import isfile, join
 
 files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-output_all = pd.DataFrame()
-i = 0
+#output_all = pd.DataFrame()
+#i = 0
 for filename in files:
     subject_name = str(filename).split(".dat")[0]
     print(filename, subject_name)
     content = [i.strip().split() for i in open(mypath+ "\\" + filename).readlines()]
     output = format(subject_name, content)
-    #output.to_csv(subject_name + ".csv", sep=';');
-    if i == 0: 
-        output.to_csv('pmap2-protocol-all.csv', sep=';')
-    else:
-        output.to_csv('pmap2-protocol-all.csv', mode='a', header=False, sep=';')
-    i+=1
+    output.to_csv("./individual-data/" + subject_name + ".csv", sep=';');
+    #if i == 0: 
+    #    output.to_csv('pmap2-protocol-all.csv', sep=';')
+    #else:
+    #    output.to_csv('pmap2-protocol-all.csv', mode='a', header=False, sep=';')
+    #i+=1
