@@ -313,16 +313,15 @@ from os import listdir
 from os.path import isfile, join
 
 files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-#output_all = pd.DataFrame()
-#i = 0
+i = 0
 for filename in files:
     subject_name = str(filename).split(".dat")[0]
     print(filename, subject_name)
     content = [i.strip().split() for i in open(mypath+ "\\" + filename).readlines()]
     output = format(subject_name, content)
-    output.to_csv("./individual-data/" + subject_name + ".csv", sep=';');
-    #if i == 0: 
-    #    output.to_csv('pmap2-protocol-all.csv', sep=';')
-    #else:
-    #    output.to_csv('pmap2-protocol-all.csv', mode='a', header=False, sep=';')
-    #i+=1
+    #output.to_csv("./individual-data/" + subject_name + ".csv", sep=';');
+    if i == 0: 
+        output.to_csv('pmap2-protocol-all.csv', sep=';')
+    else:
+        output.to_csv('pmap2-protocol-all.csv', mode='a', header=False, sep=';')
+    i+=1
