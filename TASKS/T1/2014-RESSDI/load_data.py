@@ -120,7 +120,7 @@ def transform_label(label):
     }.get(label, None) 
 
 import pandas as pd
-
+import numpy
 
 def read_file(subject, experiment, filename):
     with open(filename) as f:
@@ -129,11 +129,20 @@ def read_file(subject, experiment, filename):
     output = pd.DataFrame()
     print(len(f))
     i = 0
+    #
+    # Creates a list containing 5 lists, each of 8 items, all set to 0
+    h, w = len(f), 20;
+    Matrix = [[-1 for x in range(w)] for y in range(h)] 
+    #
+    if len(f) <= 0:
+        print("empty")
+        return
+    
     for line in f:
         i+=1
         cols = line.split('\t')
         #
-        if i % 5000 == 0: print(i)
+        if i % 50000 == 0: print(i)
         #
         ts_s = cols[HEADER_TS_S]
         ts_ms = cols[HEADER_TS_MS]
@@ -162,9 +171,35 @@ def read_file(subject, experiment, filename):
                 quat_3 = cols[pos + HEADER_QUAT + 2 ]
                 quat_4 = cols[pos + HEADER_QUAT + 3 ]
                 #
-                #print(quat_1)
-                # = output.append(
-                '''pd.DataFrame([{
+
+                Matrix[i][0] = ts_s
+                Matrix[i][1] = ts_ms
+                Matrix[i][2] = ts_s_ms
+                Matrix[i][3] = position_name
+                Matrix[i][4] = label
+                Matrix[i][5] = subject     
+                Matrix[i][6] = experiment     
+
+
+                Matrix[i][7] = acc_x
+                Matrix[i][8] = acc_y
+                Matrix[i][9] = acc_z
+
+                Matrix[i][10] = gyr_x
+                Matrix[i][11] = gyr_y
+                Matrix[i][12] = gyr_z
+
+                Matrix[i][13] = mag_x
+                Matrix[i][14] = mag_y
+                Matrix[i][15] = mag_z
+
+                Matrix[i][16] = quat_1
+                Matrix[i][17] = quat_2
+                Matrix[i][18] = quat_3
+                Matrix[i][19] = quat_4
+
+                # print(quat_1)
+                '''output = output.append(pd.DataFrame([{
                     'ts_s': ts_s,
                     'ts_ms': ts_ms,
                     'ts_s_ms': ts_s_ms,
@@ -189,38 +224,42 @@ def read_file(subject, experiment, filename):
                     'quat_2': quat_2,
                     'quat_3': quat_3,            
                     'quat_4': quat_4,            
-                }])'''
+                }]))'''
     #print(len(f), len(output))
-    output.to_csv(subject +"_"+ experiment + ".csv", sep=';')
+    #output.to_csv(subject +"_"+ experiment + ".csv", sep=';')
+    #clean_matrix = [[x for x in Matrix] for y in range(h)] 
+    a = numpy.asarray(clean_matrix)
+    numpy.savetxt( str(subject + "_" + experiment + ".csv" ), a, delimiter=";", fmt='%s')
     return output
 
+def read_log_files():
+    mypath = "C:\\Users\\paulo\\Documents\\py-har\\datasets\\RESSDI-2014\\data"
+    from os import listdir
+    from os.path import isfile, join
 
-mypath = "C:\\Users\\paulo\\Documents\\py-har\\datasets\\RESSDI-2014\\data"
-from os import listdir
-from os.path import isfile, join
+    files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    i = 0
+    for filename in files:
+        try:
+            msg_1 = str(filename).split('.')[0]
+            subject = msg_1.split("_")[0]
+            experiment = msg_1.split('_')[1]
+            #if subject not in ['subject10', 'subject11', 'subject12', 'subject13', 'subject14']:    
+            print(subject, experiment)
+            out = read_file(subject, experiment, mypath + "\\" + filename)
+            #if i == 0: 
+            #    out.to_csv('all.csv', sep=';')
+            #else:
+            #    out.to_csv('all.csv', mode='a', header=False, sep=';')
+            i+=1
+        except Exception as e:
+            print(e)
+            #traceback.print_exc()
+            pass
 
-files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-i = 0
-for filename in files:
-    msg_1 = str(filename).split('.')[0]
-    subject = msg_1.split("_")[0]
-    experiment = msg_1.split('_')[1]
-    print(subject, experiment)
-    out = read_file(subject, experiment, mypath + "\\" + filename)
-    if i == 0: 
-        out.to_csv('all.csv', sep=';')
-    else:
-        out.to_csv('all.csv', mode='a', header=False, sep=';')
-    i+=1
+read_log_files()
 
 
-'''
-Timestamp (second) | Timestamp (microsecond ) | RLA | RUA | BACK | LUA | LLA | RC | RT | LT | LC | Label
-    sensors:        ACC : X ACC : Y ACC : Z 
-                    GYR : X GYR : Y GYR : Z 
-                    MAG : X MAG : Y MAG : Z
-                    QUAT : 1 QUAT : 2 QUAT : 3 QUAT : 4
-'''  
 #if label is not None:
     # add to dataframe
 # the label is most of the time at 0! 
