@@ -6,9 +6,15 @@ print(roc_auc_score(y_true, y_scores))
 ###
 y_true = np.array(['A', 'B' ,'C', 'A', 'A', 'B'])
 y_scores = np.array(['A', 'B' ,'C','A', 'B' ,'C'])
+#
+y_true = np.array([0, 1, 1,1, 1, 1])
+y_scores = np.array([1,1,1,1, 1, 1])
+print(roc_auc_score(y_true, y_scores, average ='micro'))
+print(roc_auc_score(y_true, y_scores))
+print(roc_auc_score(y_true, y_scores, average ='samples'))
 
 ###
-'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import cycle
@@ -24,7 +30,7 @@ from scipy import interp
 iris = datasets.load_iris()
 X = iris.data
 y = iris.target
-
+print(y)
 # Binarize the output
 y = label_binarize(y, classes=[0, 1, 2])
 n_classes = y.shape[1]
@@ -48,11 +54,10 @@ fpr = dict()
 tpr = dict()
 roc_auc = dict()
 for i in range(n_classes):
-    print(y_test[:, i], y_score[:, i])
+    #print(y_test[:, i], y_score[:, i])
     fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
     roc_auc[i] = auc(fpr[i], tpr[i])
 
 # Compute micro-average ROC curve and ROC area
 fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
 roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
-'''
