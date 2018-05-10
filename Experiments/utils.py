@@ -5,6 +5,13 @@ from sklearn.metrics import classification_report
 import pandas as pd 
 
 
+def read_file(path):
+    try:
+        content = pd.read_csv(path)
+    except:
+        content = pd.DataFrame();
+    return content
+
 def add_avg_to_report(report):
     mean = [0 for i in range(len(report.columns))]
     i = 0
