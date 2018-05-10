@@ -306,8 +306,6 @@ def format(subject, content):
     
     return new_content
 
-
-
 mypath = "C:\\Users\\paulo\\Documents\\py-har\\datasets\\raw-files\\PAMAP2-2012\\PAMAP2_Dataset\\Protocol"
 from os import listdir
 from os.path import isfile, join
@@ -325,3 +323,8 @@ for filename in files:
     else:
         output.to_csv('pmap2-protocol-all.csv', mode='a', header=False, sep=';')
     i+=1
+
+'''
+header: acc1_x;acc1_y;acc1_z;acc2_x;acc2_y;acc2_z;bpm;gyr_x;gyr_y;gyr_z;label;mag_x;mag_y;mag_z;position;subject;ts
+
+'''

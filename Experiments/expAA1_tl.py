@@ -183,19 +183,19 @@ def apply_TCA(trainX, trainY, testX, testY, window, source_pos, target_pos):
     ###
     # Decision Tree
     print("\n Transfer Component Analysis (Pan et al, 2009)")
-    classifier = TransferComponentClassifier(loss="dtree", num_components=6)
+    classifier = TransferComponentClassifier(loss="dtree", num_components=1)
     classifier.fit(trainX, trainY, testX)
     pred_naive = classifier.predict(testX)
     acc_DT_TCA, acc_DT_TCA_INFO = check_accuracy(testY, pred_naive)
 
     # Logistic Regression
-    classifier = TransferComponentClassifier(loss="logistic", num_components=6)
+    classifier = TransferComponentClassifier(loss="logistic", num_components=100)
     classifier.fit(trainX, trainY, testX)
     pred_naive = classifier.predict(testX)
     acc_LR_TCA, acc_LR_TCA_INFO = check_accuracy(testY, pred_naive)
 
     # Naive Bayes Bernoulli
-    classifier = TransferComponentClassifier(loss="berno", num_components=6)
+    classifier = TransferComponentClassifier(loss="berno", num_components=1, l2=100, bandwidth=10, order=100.0, mu=100.0)
     classifier.fit(trainX, trainY, testX)
     pred_naive = classifier.predict(testX)
     acc_NB_TCA, acc_NB_TCA_INFO = check_accuracy(testY, pred_naive)

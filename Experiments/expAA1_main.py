@@ -117,7 +117,7 @@ def run_expAA1(OUTPUT_PATH):
             train = train.append(pd.read_csv(PATH + 'window_'+WINDOW+'ms_Subject 16_' + train_pos + '.csv'))
             train = train.append(pd.read_csv(PATH + 'window_'+WINDOW+'ms_Subject 17_' + train_pos + '.csv'))
             # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
-            labels = ['Walking', 'Sitting', 'Hopping', 'Jogging']
+            labels = ['Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging']
             #         
             train = train[train['label'].isin(labels)]
             #
@@ -143,20 +143,20 @@ def run_expAA1(OUTPUT_PATH):
             ########################
             #### WRITE TO FILE ########
             ########################
-            file_without_tl = file_without_tl.append(apply_notl(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
+            '''file_without_tl = file_without_tl.append(apply_notl(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
             file_with_nn = file_with_nn.append(apply_NN(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
             file_with_kmm = file_with_kmm.append(apply_KMM(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
-            file_with_sa = file_with_sa.append(apply_SA(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
+            file_with_sa = file_with_sa.append(apply_SA(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))'''
             file_with_tca = file_with_tca.append(apply_TCA(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
-            file_with_en = file_with_en.append(apply_ENSEMBLE(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
+            '''file_with_en = file_with_en.append(apply_ENSEMBLE(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))'''
 
-    # without tl
+    '''# without tl
     file_without_tl = add_avg_to_report(file_without_tl)
-    file_without_tl.to_csv(OUTPUT_PATH + 'exp-AA1-wihout-tl.csv', sep=';');
+    file_without_tl.to_csv(OUTPUT_PATH + 'exp-AA1-wihout-tl.csv', sep=';');'''
     # tca
     file_with_tca = add_avg_to_report(file_with_tca)
     file_with_tca.to_csv(OUTPUT_PATH + 'exp-AA1-with-tca.csv', sep=';');
-    # sa
+    '''# sa
     file_with_sa = add_avg_to_report(file_with_sa)
     file_with_sa.to_csv(OUTPUT_PATH + 'exp-AA1-with-sa.csv', sep=';');
     # kmm
@@ -167,7 +167,7 @@ def run_expAA1(OUTPUT_PATH):
     file_with_nn.to_csv(OUTPUT_PATH + 'exp-AA1-with-nn.csv', sep=';');
     # en
     file_with_en = add_avg_to_report(file_with_en)
-    file_with_en.to_csv(OUTPUT_PATH + 'exp-AA1-with-en.csv', sep=';');    
+    file_with_en.to_csv(OUTPUT_PATH + 'exp-AA1-with-en.csv', sep=';');    '''
 
 
 '''
