@@ -25,10 +25,10 @@ from utils import balance_dataset
 from utils import add_avg_to_report
 from utils import read_file
 #
-from expPP1_tl import apply_ENSEMBLE, apply_KMM, apply_NN, apply_SA, apply_TCA
+from expAA1_tl import apply_ENSEMBLE, apply_KMM, apply_NN, apply_SA, apply_TCA
 #
+from ansamo import ANSAMO
 from pmap2 import PMAP2
-from labels import LABELS
 
 def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
     #######################
@@ -83,32 +83,37 @@ def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
         }]
     )
 
-def run_expPP1(OUTPUT_PATH):
+
+def run_expAA1(OUTPUT_PATH):
     ########################
     #### LOAD DATA #########
     ########################
-    WINDOW = '3'
-    data = PMAP2(WINDOW)
-    # labels
-    labels = [LABELS.LYING, LABELS.SITTING,LABELS.STANDING,LABELS.WALKING,
-        LABELS.RUNNING,LABELS.STAIRS_UP, LABELS.STAIRS_DOWN, LABELS.ROPE_JUMPING]
+    WINDOW = '3000'
+    data_ansamo = ANSAMO('3000')
+    data_pmap = PMAP2('3')
+
     # users
-    train_users = ['subject101', 'subject103', 'subject104', 'subject105', 'subject106', 'subject107', 'subject108']
-    test_users = ['subject102']
+    train_users_ansamo = ['Subject 01', 'Subject 02', 'Subject 03', 'Subject 04', 'Subject 05', 'Subject 06', 'Subject 08', 'Subject 09', 'Subject 11', 
+        'Subject 12', 'Subject 13', 'Subject 14', 'Subject 15', 'Subject 16', 'Subject 17']
+    test_users_pmap = ['subject102']
     #
     file_without_tl, file_with_tca, file_with_kmm, file_with_nn, file_with_sa, file_with_en  = pd.DataFrame(), pd.DataFrame(),pd.DataFrame(), pd.DataFrame(),pd.DataFrame(),pd.DataFrame()
     #
-    for train_pos in data.get_positions(users=train_users):
-        for test_pos in data.get_positions(users=test_users):
+    for train_pos in ['ankle', 'chest', 'hand']:
+        for test_pos in ['ankle', 'chest', 'wrist']:
             #
             print(train_pos, test_pos)
             #
-            train = data.get_data(users=train_users, positions=[train_pos], labels=labels)
-            test = data.get_data(users=test_users, positions=[test_pos], labels=labels)
+            train = data_ansamo.get_data(users=train_users_ansamo, positions=[train_pos])
+            test = data.get_data(users=test_users, positions=[test_pos])
             trainX = train.drop('label', 1)
             trainY = train['label']
             testX = test.drop('label', 1)
             testY = test['label']
+            # CONVERT LABELS
+            
+
+            #
             #   NORMALIZE
             #       print(type(trainX), len(trainX))
             #       trainX = normalize_dataset(trainX,  'l2')
@@ -130,27 +135,34 @@ def run_expPP1(OUTPUT_PATH):
 
     # without tl
     file_without_tl = add_avg_to_report(file_without_tl)
-    file_without_tl.to_csv(OUTPUT_PATH + 'exp-PP1-wihout-tl.csv', sep=';')
+    file_without_tl.to_csv(OUTPUT_PATH + 'exp-AA1-wihout-tl.csv', sep=';')
     '''# tca
     file_with_tca = add_avg_to_report(file_with_tca)
-    file_with_tca.to_csv(OUTPUT_PATH + 'exp-PP1-with-tca.csv', sep=';');
+    file_with_tca.to_csv(OUTPUT_PATH + 'exp-AA1-with-tca.csv', sep=';');
     # sa
     file_with_sa = add_avg_to_report(file_with_sa)
-    file_with_sa.to_csv(OUTPUT_PATH + 'exp-PP1-with-sa.csv', sep=';');
+    file_with_sa.to_csv(OUTPUT_PATH + 'exp-AA1-with-sa.csv', sep=';');
     # kmm
     file_with_kmm = add_avg_to_report(file_with_kmm)
-    file_with_kmm.to_csv(OUTPUT_PATH + 'exp-PP1-with-kmm.csv', sep=';');    
+    file_with_kmm.to_csv(OUTPUT_PATH + 'exp-AA1-with-kmm.csv', sep=';');    
     # nn
     file_with_nn = add_avg_to_report(file_with_nn)
-    file_with_nn.to_csv(OUTPUT_PATH + 'exp-PP1-with-nn.csv', sep=';');
+    file_with_nn.to_csv(OUTPUT_PATH + 'exp-AA1-with-nn.csv', sep=';');
     # en
     file_with_en = add_avg_to_report(file_with_en)
-    file_with_en.to_csv(OUTPUT_PATH + 'exp-PP1-with-en.csv', sep=';');'''
+    file_with_en.to_csv(OUTPUT_PATH + 'exp-AA1-with-en.csv', sep=';');'''
 
-run_expPP1('./EXP-PP1/')
+#run_expAA1('./EXP-AA1/')
 #train, test = load_data()
 #print(len(train.columns))
 #print(train.columns[0:15])
+
+print(set(PMAP2().get_positions()))
+print(set(PMAP2().get_labels()))
+print(set(ANSAMO().get_positions()))
+print(set(ANSAMO().get_labels()))
+
+
 '''
 Observations:
     - SUP best accuracy is 40%

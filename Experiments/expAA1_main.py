@@ -82,27 +82,6 @@ def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
         }]
     )
 
-'''
-def load_data(window):
-    PATH  = './datasets/PMAP2/'
-    # join all users
-    train = pd.read_csv(PATH + window + 's_subject101.csv', sep=';')
-    #train = train.append( pd.read_csv(PATH + window + 's_subject102.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject103.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject104.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject105.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject106.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject107.csv', sep=';'))
-    train = train.append( pd.read_csv(PATH + window + 's_subject108.csv', sep=';'))
-
-    test = pd.read_csv(PATH + window + 's_subject102.csv', sep=';')
-    #
-    labels = [1,2,3,4,5,12,13,24]
-    train = train[train['label'].isin(labels)]
-    test = test[test['label'].isin(labels)]
-    # 
-    return train, test
-'''
 
 def run_expAA1(OUTPUT_PATH):
     ########################
