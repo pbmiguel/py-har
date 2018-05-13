@@ -25,10 +25,11 @@ from utils import balance_dataset
 from utils import add_avg_to_report
 from utils import read_file
 #
-from expAA1_tl import apply_ENSEMBLE, apply_KMM, apply_NN, apply_SA, apply_TCA
+from expAP1_tl import apply_ENSEMBLE, apply_KMM, apply_NN, apply_SA, apply_TCA
 #
 from ansamo import ANSAMO
 from pmap2 import PMAP2
+from labels import LABELS
 
 def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
     #######################
@@ -84,14 +85,15 @@ def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
     )
 
 
-def run_expAA1(OUTPUT_PATH):
+def run_expAP1(OUTPUT_PATH):
     ########################
     #### LOAD DATA #########
     ########################
     WINDOW = '3000'
     data_ansamo = ANSAMO('3000')
     data_pmap = PMAP2('3')
-
+    #
+    labels = [LABELS.SITTING,LABELS.WALKING,LABELS.RUNNING,LABELS.STAIRS_UP, LABELS.STAIRS_DOWN]
     # users
     train_users_ansamo = ['Subject 01', 'Subject 02', 'Subject 03', 'Subject 04', 'Subject 05', 'Subject 06', 'Subject 08', 'Subject 09', 'Subject 11', 
         'Subject 12', 'Subject 13', 'Subject 14', 'Subject 15', 'Subject 16', 'Subject 17']
@@ -99,22 +101,19 @@ def run_expAA1(OUTPUT_PATH):
     #
     file_without_tl, file_with_tca, file_with_kmm, file_with_nn, file_with_sa, file_with_en  = pd.DataFrame(), pd.DataFrame(),pd.DataFrame(), pd.DataFrame(),pd.DataFrame(),pd.DataFrame()
     #
-    for train_pos in ['ankle', 'chest', 'hand']:
-        for test_pos in ['ankle', 'chest', 'wrist']:
+    for train_pos in ['ankle', 'chest', 'wrist']:
+        for test_pos in ['ankle', 'chest', 'hand']:
             #
             print(train_pos, test_pos)
             #
-            train = data_ansamo.get_data(users=train_users_ansamo, positions=[train_pos])
-            test = data.get_data(users=test_users, positions=[test_pos])
+            train = data_ansamo.get_data(users=train_users_ansamo, positions=[train_pos], labels=labels)
+            test = data_pmap.get_data(users=test_users_pmap, positions=[test_pos], labels=labels)
             trainX = train.drop('label', 1)
             trainY = train['label']
             testX = test.drop('label', 1)
-            testY = test['label']
-            # CONVERT LABELS
-            
-
+            testY = test['label']          
             #
-            #   NORMALIZE
+            #NORMALIZE
             #       print(type(trainX), len(trainX))
             #       trainX = normalize_dataset(trainX,  'l2')
             #       testX = normalize_dataset(testX,  'l2')
@@ -135,32 +134,27 @@ def run_expAA1(OUTPUT_PATH):
 
     # without tl
     file_without_tl = add_avg_to_report(file_without_tl)
-    file_without_tl.to_csv(OUTPUT_PATH + 'exp-AA1-wihout-tl.csv', sep=';')
+    file_without_tl.to_csv(OUTPUT_PATH + 'exp-AP1-wihout-tl.csv', sep=';')
     '''# tca
     file_with_tca = add_avg_to_report(file_with_tca)
-    file_with_tca.to_csv(OUTPUT_PATH + 'exp-AA1-with-tca.csv', sep=';');
+    file_with_tca.to_csv(OUTPUT_PATH + 'exp-AP1-with-tca.csv', sep=';');
     # sa
     file_with_sa = add_avg_to_report(file_with_sa)
-    file_with_sa.to_csv(OUTPUT_PATH + 'exp-AA1-with-sa.csv', sep=';');
+    file_with_sa.to_csv(OUTPUT_PATH + 'exp-AP1-with-sa.csv', sep=';');
     # kmm
     file_with_kmm = add_avg_to_report(file_with_kmm)
-    file_with_kmm.to_csv(OUTPUT_PATH + 'exp-AA1-with-kmm.csv', sep=';');    
+    file_with_kmm.to_csv(OUTPUT_PATH + 'exp-AP1-with-kmm.csv', sep=';');    
     # nn
     file_with_nn = add_avg_to_report(file_with_nn)
-    file_with_nn.to_csv(OUTPUT_PATH + 'exp-AA1-with-nn.csv', sep=';');
+    file_with_nn.to_csv(OUTPUT_PATH + 'exp-AP1-with-nn.csv', sep=';');
     # en
     file_with_en = add_avg_to_report(file_with_en)
-    file_with_en.to_csv(OUTPUT_PATH + 'exp-AA1-with-en.csv', sep=';');'''
+    file_with_en.to_csv(OUTPUT_PATH + 'exp-AP1-with-en.csv', sep=';');'''
 
-#run_expAA1('./EXP-AA1/')
+run_expAP1('./EXP-AP1/')
 #train, test = load_data()
 #print(len(train.columns))
 #print(train.columns[0:15])
-
-print(set(PMAP2().get_positions()))
-print(set(PMAP2().get_labels()))
-print(set(ANSAMO().get_positions()))
-print(set(ANSAMO().get_labels()))
 
 
 '''

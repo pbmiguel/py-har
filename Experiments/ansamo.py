@@ -55,6 +55,3 @@ class ANSAMO( object ):
         dataframe['label'] =  dataframe['label'].replace(['Bending'], LABELS.BENDING)
 
         return dataframe
-
-data = ANSAMO()
-print(data.get_labels())
