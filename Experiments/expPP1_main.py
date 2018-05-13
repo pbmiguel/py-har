@@ -82,7 +82,7 @@ def apply_notl(trainX, trainY, testX, testY, window, source_pos, target_pos):
         }]
     )
 
-
+'''
 def load_data(window):
     PATH  = './datasets/PMAP2/'
     # join all users
@@ -102,64 +102,56 @@ def load_data(window):
     test = test[test['label'].isin(labels)]
     # 
     return train, test
+'''
 
 def run_expPP1(OUTPUT_PATH):
     ########################
     #### LOAD DATA #########
     ########################
     WINDOW = '3'
-    train_all, test_all = load_data(WINDOW)
+    data = PMAP2(WINDOW)
+    # labels
+    labels = [1,2,3,4,5,12,13,24]
+    # users
+    train_users = ['subject101', 'subject103', 'subject104', 'subject105', 'subject106', 'subject107', 'subject108']
+    test_users = ['subject102']
+    #
     file_without_tl, file_with_tca, file_with_kmm, file_with_nn, file_with_sa, file_with_en  = pd.DataFrame(), pd.DataFrame(),pd.DataFrame(), pd.DataFrame(),pd.DataFrame(),pd.DataFrame()
     #
-    for train_pos in set(train_all['position']):
-        for test_pos in set(test_all['position']):
-            #if str(train_pos) is str(test_pos): 
-            #    continue
+    for train_pos in data.get_positions(users=train_users):
+        for test_pos in data.get_positions(users=test_users):
             #
             print(train_pos, test_pos)
-
-            train = train_all[train_all['position'].isin([train_pos])]
-            test = test_all[test_all['position'].isin([test_pos])]
-            # REMOVE COLUMNS
-            cols_to_remove = ['Unnamed: 0', 'accX', 'accY', 'accZ', 'gyrX', 'gyrY', 'gyrZ',
-            'magX', 'magY', 'magZ', 'position', 'ts' , 'userID']
-            train = train.drop(cols_to_remove, axis=1)
-            test = test.drop(cols_to_remove, axis=1)
             #
-            # remove certain labels {'Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging'}
-            #labels = ['Bending', 'GoDownstairs', 'Hopping', 'Walking', 'Sitting', 'GoUpstairs', 'Jogging']
-            #train = train[train['label'].isin(labels)]
-            #
+            train = data.get_data(users=train_users, positions=[train_pos], labels=labels)
+            test = data.get_data(users=test_users, positions=[test_pos], labels=labels)
             trainX = train.drop('label', 1)
             trainY = train['label']
-            #test = test[test['label'].isin(labels)]
-            #
             testX = test.drop('label', 1)
             testY = test['label']
-            # NORMALIZE
-            #print(type(trainX), len(trainX))
-            #trainX = normalize_dataset(trainX,  'l2')
-            #testX = normalize_dataset(testX,  'l2')
-            # BALANCE DATA
+            #   NORMALIZE
+            #       print(type(trainX), len(trainX))
+            #       trainX = normalize_dataset(trainX,  'l2')
+            #       testX = normalize_dataset(testX,  'l2')
+            #   BALANCE DATA
             trainX, trainY = balance_dataset(trainX, trainY)
-            #estX, testY = balance_dataset(testX, testY)
-            #
+            #   testX, testY = balance_dataset(testX, testY)
             print("Normalizing and Balancing Data")
-            #
+            #   
             ########################
             #### WRITE TO FILE ########
             ########################
             file_without_tl = file_without_tl.append(apply_notl(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
-            '''file_with_nn = file_with_nn.append(apply_NN(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
+            file_with_nn = file_with_nn.append(apply_NN(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
             file_with_kmm = file_with_kmm.append(apply_KMM(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
             file_with_sa = file_with_sa.append(apply_SA(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
             file_with_tca = file_with_tca.append(apply_TCA(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
-            file_with_en = file_with_en.append(apply_ENSEMBLE(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))'''
+            file_with_en = file_with_en.append(apply_ENSEMBLE(trainX, trainY, testX, testY, WINDOW, train_pos, test_pos))
 
     # without tl
     file_without_tl = add_avg_to_report(file_without_tl)
-    file_without_tl.to_csv(OUTPUT_PATH + 'exp-PP1-wihout-tl.csv', sep=';');
-    '''# tca
+    file_without_tl.to_csv(OUTPUT_PATH + 'exp-PP1-wihout-tl.csv', sep=';')
+    # tca
     file_with_tca = add_avg_to_report(file_with_tca)
     file_with_tca.to_csv(OUTPUT_PATH + 'exp-PP1-with-tca.csv', sep=';');
     # sa
@@ -173,7 +165,7 @@ def run_expPP1(OUTPUT_PATH):
     file_with_nn.to_csv(OUTPUT_PATH + 'exp-PP1-with-nn.csv', sep=';');
     # en
     file_with_en = add_avg_to_report(file_with_en)
-    file_with_en.to_csv(OUTPUT_PATH + 'exp-PP1-with-en.csv', sep=';');'''
+    file_with_en.to_csv(OUTPUT_PATH + 'exp-PP1-with-en.csv', sep=';');
 
 run_expPP1('./EXP-PP1/')
 #train, test = load_data()
