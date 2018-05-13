@@ -306,6 +306,7 @@ def format(subject, content):
     
     return new_content
 
+
 mypath = "C:\\Users\\paulo\\Documents\\py-har\\datasets\\raw-files\\PAMAP2-2012\\PAMAP2_Dataset\\Protocol"
 from os import listdir
 from os.path import isfile, join

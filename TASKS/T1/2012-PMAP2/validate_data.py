@@ -81,3 +81,45 @@ for filename in files:
     subject109.csv ts Unnamed: 0 1.0
     subject109.csv ts bpm 0.95193096068
 '''
+
+'''
+mypath = "./feature_extraction_data/"
+files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+i = 0
+for filename in files:
+    content = pd.read_csv(mypath + filename, sep=';')
+    #print(filename, content.dtypes, content.columns)
+    out = pd.DataFrame()
+    users = set(content['userID'])
+    for user in users:
+        subject = content[content['userID'].isin([user])]
+        #print("len(subject):", len(subject))
+        #experiments
+        labels = set(content['label'])
+        print(user, labels, len(subject))
+
+    >> labels per user:
+        subject101 {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 24} 2787
+        subject102 {0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 16, 17, 24} 3312
+        subject103 {0, 1, 2, 3, 4, 12, 13, 16, 17} 1866
+'''
+'''
+mypath = "./feature_extraction_data/"
+files = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+i = 0
+content_filtered = pd.DataFrame()
+for filename in files:
+    content = pd.read_csv(mypath + '5s_subject109.csv', sep=';')
+    out = pd.DataFrame()
+    print(len(content))
+    content = content.dropna(axis=0, how='any')
+    print(len(content))
+    content.to_csv('temp.csv', sep=';')
+    break
+'''
+
+#content_all.to_csv("subject_all.csv", sep=';')
+#for cc in dataset.columns:
+#    if cc == str('label') or cc == str('userGender') or cc == str('userID') or cc == str('userAge') or cc == str('position'): continue;
+#    dataset[cc] = dataset[cc].astype(int)
+
