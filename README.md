@@ -1,3 +1,15 @@
+<!-- PROJECT SHIELDS -->
+<!--
+*** I'm using markdown "reference style" links for readability.
+*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
+*** See the bottom of this document for the declaration of the reference variables
+*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
+
+[![Stargazers][stars-shield]][stars-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+
 # py-har
 Human Activity Recognition With Python. This repository has various use-cases of activity recognition, applying various ML techniques for classifiying tasks.
 
@@ -16,3 +28,11 @@ https://robjhyndman.com/hyndsight/tscv/
 
 
 ## Helpful References  
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+[stars-shield]: https://img.shields.io/github/stars/pbmiguel/py-har?style=flat-square
+[stars-url]: https://github.com/pbmiguel/py-har/stargazers
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/paulo-miguel-barbosa/
