@@ -11,7 +11,7 @@
 [![LinkedIn][linkedin-shield]][linkedin-url]
  
 # py-har or Human Activity Recognition (HAR) With Python
-#### This repository has various use-cases of activity recognition, applying different ML techniques for classifiying tasks.
+#### This repository has various use-cases of activity recognition, applying different ML techniques for classification-tasks.
 
 ## First, a survey on activity-recognition datasets
 ![alt text](https://github.com/pbmiguel/py-har/blob/master/HAR%20Datasets.png)
