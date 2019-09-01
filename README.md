@@ -9,12 +9,23 @@
 
 [![Stargazers][stars-shield]][stars-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-
-# py-har or Human Activity Recognition With Python
+ 
+# py-har or Human Activity Recognition (HAR) With Python
 #### This repository has various use-cases of activity recognition, applying different ML techniques for classifiying tasks.
 
 ## First, a survey on activity-recognition datasets
 ![alt text](https://github.com/pbmiguel/py-har/blob/master/HAR%20Datasets.png)
+
+## The Project's Structure
+
+#### ./Experiments 
+has a set of different scenarios that apply different transfer-learning techniques in activity-recognition datasets
+### ./Unsupervised Domain Adaptation in HAR
+is a collection of projects that apply this technique in HAR
+### ./Unsupervised Domain Adaptation
+is a collection of projects that apply this technique in different scenarios besides HAR
+### ./Working With Datasets
+handles the pre-processing of the datasets
 
 ## Observation
 
