@@ -18,13 +18,14 @@
 
 ## The Project's Structure
 
-#### ./Experiments 
+#### ./Experiments
+
 has a set of different scenarios that apply different transfer-learning techniques in activity-recognition datasets
-### ./Unsupervised Domain Adaptation in HAR
+#### ./Unsupervised Domain Adaptation in HAR
 is a collection of projects that apply this technique in HAR
-### ./Unsupervised Domain Adaptation
+#### ./Unsupervised Domain Adaptation
 is a collection of projects that apply this technique in different scenarios besides HAR
-### ./Working With Datasets
+#### ./Working With Datasets
 handles the pre-processing of the datasets
 
 ## Observation
